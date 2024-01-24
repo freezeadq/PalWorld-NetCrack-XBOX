@@ -172,7 +172,7 @@ namespace DX11_Base {
             ImGui::Checkbox("SafeTeleport", &Config.IsSafe);
             ImGui::InputFloat3("Pos:", Config.Pos);
             ImGui::InputInt("EXP:", &Config.EXP);
-            ImGui::InputText("ItemName", Config.ItemName,sizeof(Config.ItemName));
+            ImGui::InputText("Item Name:", Config.ItemName,sizeof(Config.ItemName));
             ImGui::InputInt("ItemNum", &Config.Item);
             if (ImGui::Button("Give item", ImVec2(ImGui::GetWindowContentRegionWidth() - 3, 20)))
             {
