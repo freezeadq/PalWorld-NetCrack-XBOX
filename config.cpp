@@ -60,7 +60,7 @@ SDK::TArray<SDK::APalPlayerCharacter*> config::GetTAllPlayers()
 
 void config::Init()
 {
-    Config.ClientBase = (DWORD64)GetModuleHandleA("PalWorld-Win64-Shipping.exe");
+    Config.ClientBase = (DWORD64)GetModuleHandleA("PalWorld-WinGDK-Shipping.exe");
     
     TickFunc = (Tick)(Config.ClientBase + Config.offset_Tick);
     GetAllPlayerFunc = (GetAllPlayer)(Config.ClientBase + Config.offset_GetAllPlayers);
