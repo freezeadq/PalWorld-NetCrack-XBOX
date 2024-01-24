@@ -19,35 +19,6 @@ void AddItem(SDK::UPalPlayerInventoryData* data,char* itemName, int count)
     //Call
     data->RequestAddItem(Name, count, true);
 }
-void SpawnPal(char* PalName,int rank, int lvl = 1)
-{
-    SDK::UKismetStringLibrary* lib = SDK::UKismetStringLibrary::GetDefaultObj();
-
-    //Convert FNAME
-    wchar_t  ws[255];
-    swprintf(ws, 255, L"%hs", PalName);
-    SDK::FName Name = lib->Conv_StringToName(SDK::FString(ws));
-    //Call
-    if (Config.GetPalPlayerCharacter() != NULL)
-    {
-        if (Config.GetPalPlayerCharacter()->GetPalPlayerController() != NULL)
-        {
-            if (Config.GetPalPlayerCharacter()->GetPalPlayerController())
-            {
-                if (Config.GetPalPlayerCharacter()->GetPalPlayerController()->GetPalPlayerState())
-                {
-                    EA[0] = SDK::EPalWazaID::AirCanon;
-                    palinfo.Level = lvl;
-                    palinfo.Rank = rank;
-                    palinfo.PalName.Key = Name;
-                    palinfo.WazaList = EA;
-                    palinfo.PassiveSkill = NULL;
-                    Config.GetPalPlayerCharacter()->GetPalPlayerController()->GetPalPlayerState()->Debug_CaptureNewMonsterByDebugOtomoInfo_ToServer(palinfo);
-                }
-            }
-        }
-    }
-}
 void AnyWhereTP(SDK::FVector& vector,bool IsSafe)
 {
     if (!IsSafe)
@@ -183,26 +154,6 @@ namespace DX11_Base {
                                     g_Console->printdbg("\n\n[+] ItemName: %s [+]\n\n", g_Console->color.green, Config.ItemName);
                                     AddItem(InventoryData, Config.ItemName, Config.Item);
                                 }
-                            }
-                        }
-                    }
-                }
-            }
-            ImGui::InputText("PalName", Config.PalName, sizeof(Config.PalName));
-            ImGui::InputInt("PalRank", &Config.PalRank);
-            ImGui::InputInt("Pallvl", &Config.PalLvL);
-            if (ImGui::Button("Spawn Pal", ImVec2(ImGui::GetWindowContentRegionWidth() - 3, 20)))
-            {
-                if (Config.GetPalPlayerCharacter() != NULL)
-                {
-                    if (Config.GetPalPlayerCharacter()->GetPalPlayerController() != NULL)
-                    {
-                        if (Config.GetPalPlayerCharacter()->GetPalPlayerController()->GetPalPlayerState() != NULL)
-                        {
-                            if (Config.PalName != NULL)
-                            {
-                                g_Console->printdbg("\n\n[+] PalName: %s [+]\n\n", g_Console->color.green, Config.ItemName);
-                                SpawnPal(Config.PalName,Config.PalRank,Config.PalLvL);
                             }
                         }
                     }
