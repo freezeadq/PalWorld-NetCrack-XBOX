@@ -230,20 +230,6 @@ namespace DX11_Base {
                     }
                 }
             }
-            if (ImGui::Button("MaxWeight", ImVec2(ImGui::GetWindowContentRegionWidth() - 3, 20)))
-            {
-                SDK::APalPlayerCharacter* p_appc = Config.GetPalPlayerCharacter();
-                if (p_appc != NULL)
-                {
-                    if (Config.GetPalPlayerCharacter()->GetPalPlayerController() != NULL)
-                    {
-                        if (Config.GetPalPlayerCharacter()->GetPalPlayerController()->GetPalPlayerState() != NULL)
-                        {
-                            Config.GetPalPlayerCharacter()->GetPalPlayerController()->GetPalPlayerState()->InventoryData->OnRep_BuffMaxWeight();
-                        }
-                    }
-                }
-            }
             if (ImGui::Button("AnywhereTP", ImVec2(ImGui::GetWindowContentRegionWidth() - 3, 20)))
             {
                 if (Config.GetPalPlayerCharacter()!= NULL)
