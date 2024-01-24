@@ -139,19 +139,10 @@ namespace DX11_Base {
 
             ImGui::Checkbox("InfStamina", &Config.IsInfStamina);
 
+            ImGui::Checkbox("InfAmmo", &Config.IsInfinAmmo);
+
             //Creadit Mokobake
             //ImGui::Checkbox("MuteKiGodmode", &Config.IsMuteki);
-
-            if (ImGui::Button("ToggleInfAmmo",ImVec2(ImGui::GetWindowContentRegionWidth() - 3, 20)))
-            {
-                if (Config.GetPalPlayerCharacter()->ShooterComponent != NULL && Config.GetPalPlayerCharacter()->ShooterComponent->CanShoot())
-                {
-                    if (Config.GetPalPlayerCharacter()->ShooterComponent->GetHasWeapon() != NULL)
-                    {
-                        Config.GetPalPlayerCharacter()->ShooterComponent->GetHasWeapon()->IsRequiredBullet = !Config.GetPalPlayerCharacter()->ShooterComponent->GetHasWeapon()->IsRequiredBullet;
-                    }
-                }
-            }
             
             ImGui::SliderFloat("SpeedModifilers", &Config.SpeedModiflers, 1, 10);
             ImGui::SliderInt("AttackModifilers", &Config.DamageUp, 0, 200000);
@@ -235,6 +226,20 @@ namespace DX11_Base {
                                 Config.GetPalPlayerCharacter()->GetPalPlayerController()->GetPalPlayerState()->RequestRespawn();
                             }
 
+                        }
+                    }
+                }
+            }
+            if (ImGui::Button("MaxWeight", ImVec2(ImGui::GetWindowContentRegionWidth() - 3, 20)))
+            {
+                SDK::APalPlayerCharacter* p_appc = Config.GetPalPlayerCharacter();
+                if (p_appc != NULL)
+                {
+                    if (Config.GetPalPlayerCharacter()->GetPalPlayerController() != NULL)
+                    {
+                        if (Config.GetPalPlayerCharacter()->GetPalPlayerController()->GetPalPlayerState() != NULL)
+                        {
+                            Config.GetPalPlayerCharacter()->GetPalPlayerController()->GetPalPlayerState()->InventoryData->OnRep_BuffMaxWeight();
                         }
                     }
                 }
@@ -493,6 +498,15 @@ namespace DX11_Base {
                 }
             }
         }
- 
+        if (Config.GetPalPlayerCharacter() != NULL)
+        {
+            if (Config.GetPalPlayerCharacter()->ShooterComponent != NULL && Config.GetPalPlayerCharacter()->ShooterComponent->CanShoot())
+            {
+                if (Config.GetPalPlayerCharacter()->ShooterComponent->GetHasWeapon() != NULL)
+                {
+                    Config.GetPalPlayerCharacter()->ShooterComponent->GetHasWeapon()->IsRequiredBullet = !Config.IsInfinAmmo;
+                }
+            }
+        }
     }
 }
