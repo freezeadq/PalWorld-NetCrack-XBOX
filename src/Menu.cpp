@@ -136,7 +136,6 @@ namespace DX11_Base {
         void TABExploit()
         {
             //Config.GetPalPlayerCharacter()->GetPalPlayerController()->GetPalPlayerState()->RequestSpawnMonsterForPlayer(name, 5, 1);
-            ImGui::Checkbox("IsQuick", &Config.IsQuick);
             ImGui::Checkbox("SafeTeleport", &Config.IsSafe);
             ImGui::InputFloat3("Pos:", Config.Pos);
             ImGui::InputInt("EXP:", &Config.EXP);
@@ -159,6 +158,37 @@ namespace DX11_Base {
                                 {
                                     g_Console->printdbg("\n\n[+] ItemName: %s [+]\n\n", g_Console->color.green, Config.ItemName);
                                     AddItem(InventoryData, Config.ItemName, Config.Item);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            if (ImGui::Button("Give first item", ImVec2(ImGui::GetWindowContentRegionWidth() - 3, 20)))
+            {
+                SDK::APalPlayerCharacter* p_appc = Config.GetPalPlayerCharacter();
+                if (p_appc != NULL)
+                {
+                    if (Config.GetPalPlayerCharacter()->GetPalPlayerController() != NULL)
+                    {
+                        if (Config.GetPalPlayerCharacter()->GetPalPlayerController()->GetPalPlayerState() != NULL)
+                        {
+                            SDK::UPalPlayerInventoryData* InventoryData = Config.GetPalPlayerCharacter()->GetPalPlayerController()->GetPalPlayerState()->GetInventoryData();
+                            if (InventoryData != NULL) {
+                                SDK::UPalItemContainerMultiHelper* InventoryMultiHelper = InventoryData->InventoryMultiHelper;
+                                if (InventoryMultiHelper != NULL) {
+                                    SDK::TArray<class SDK::UPalItemContainer*> Containers = InventoryMultiHelper->Containers;
+                                    if (Containers.Num() == 0) {
+                                        return;
+                                    }
+
+                                    SDK::UPalItemSlot* FirstSlot = Containers[0]->Get(0);
+
+                                    if (FirstSlot != NULL)
+                                    {
+                                        SDK::FPalItemId FirstItemId = FirstSlot->GetItemId();
+                                        InventoryData->RequestAddItem(FirstItemId.StaticId, Config.Item, true);
+                                    }
                                 }
                             }
                         }
