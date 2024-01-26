@@ -341,8 +341,13 @@ namespace DX11_Base {
                 SDK::FPalIndividualCharacterSaveParameter sParams = ivParams->SaveParameter;
                 SDK::TArray<SDK::FFloatContainer_FloatPair> mCraftSpeedArray = sParams.CraftSpeedRates.Values;
 
-                if (mCraftSpeedArray.Num() > 0)
-                    mCraftSpeedArray[0].Value = 99999.f;
+                for (int i = 0; i <= mCraftSpeedArray.Max(); i++)
+                {
+                    if (mCraftSpeedArray.IsValidIndex(i))
+                    {
+                        mCraftSpeedArray[i].Value = 99999.f;
+                    }
+                }
             }
            ////ImGui::InputText("Pal Name", Config.PalName, sizeof(Config.PalName));
            // //if (!Config.IsMonster){ImGui::InputInt("Pal Rank", &Config.PalRank);}
@@ -498,6 +503,100 @@ namespace DX11_Base {
                 }
             }
         }
+
+        void TABItemSpawner()
+        {
+            static int num_to_add = 1;
+            static int category = 0;
+
+            ImGui::InputInt("Num To Add", &num_to_add);
+
+            ImGui::Combo("Item Category", &category, "Accessories\0Ammo\0Armor\0Crafting Materials\0Eggs\0Food\0Hats\0\Medicine\0Money\0Other\0Pal Spheres\0Seeds\0Tools\0Weapons\0");
+
+            std::initializer_list list = database::accessories;
+
+            switch (category)
+            {
+                case 1:
+                    list = database::ammo;
+                    break;
+                case 2:
+                    list = database::armor;
+                    break;
+                case 3:
+                    list = database::craftingmaterials;
+                    break;
+                case 4:
+                    list = database::eggs;
+                    break;
+                case 5:
+                    list = database::food;
+                    break;
+                case 6:
+                    list = database::hats;
+                    break;
+                case 7:
+                    list = database::medicine;
+                    break;
+                case 8:
+                    list = database::money;
+                    break;
+                case 9:
+                    list = database::other;
+                    break;
+                case 10:
+                    list = database::palspheres;
+                    break;
+                case 11:
+                    list = database::seeds;
+                    break;
+                case 12:
+                    list = database::toolss;
+                    break;
+                case 13:
+                    list = database::weapons;
+                    break;
+                default:
+                    list = database::accessories;
+            }
+
+            int cur_size = 0;
+
+            char item_search[100];
+
+            ImGui::InputText("Search", item_search, IM_ARRAYSIZE(item_search));
+
+            for (const auto& item : list) {
+                std::istringstream ss(item);
+                std::string left_text, right_text;
+
+                std::getline(ss, left_text, '|');
+                std::getline(ss, right_text);
+
+                if (item_search[0] != '\0' && !right_text.contains(item_search))
+                    continue;
+
+                if (cur_size != 0 && cur_size < 20)
+                {
+                    ImGui::SameLine();
+                }
+                else if (cur_size != 0)
+                {
+                    cur_size = 0;
+                }
+
+                cur_size += right_text.length();
+
+                ImGui::PushID(item);
+                if(ImGui::Button(right_text.c_str()))
+                {
+                    SDK::UPalPlayerInventoryData* InventoryData = Config.GetPalPlayerCharacter()->GetPalPlayerController()->GetPalPlayerState()->GetInventoryData();
+                    AddItem(InventoryData, (char*)left_text.c_str(), num_to_add);
+                }
+                ImGui::PopID();
+            }
+        }
+
         void TABQuick()//Creadit:asashi
         {
                 if (ImGui::Button("Basic Items stack", ImVec2(ImGui::GetWindowContentRegionWidth() - 3, 20))) {
@@ -577,6 +676,11 @@ namespace DX11_Base {
           if (ImGui::BeginTabItem("Database"))
           {
               Tabs::TABDatabase();
+              ImGui::EndTabItem();
+          }
+          if (ImGui::BeginTabItem("Item Spawner"))
+          {
+              Tabs::TABItemSpawner();
               ImGui::EndTabItem();
           }
           if (ImGui::BeginTabItem("CONFIG"))
@@ -694,12 +798,9 @@ namespace DX11_Base {
         }
         if (Config.GetPalPlayerCharacter() != NULL)
         {
-            if (Config.GetPalPlayerCharacter()->ShooterComponent != NULL && Config.GetPalPlayerCharacter()->ShooterComponent->CanShoot())
+            if (Config.GetPalPlayerCharacter()->ShooterComponent != NULL && Config.GetPalPlayerCharacter()->ShooterComponent->GetHasWeapon() != NULL && Config.GetPalPlayerCharacter()->ShooterComponent->CanShoot())
             {
-                if (Config.GetPalPlayerCharacter()->ShooterComponent->GetHasWeapon() != NULL)
-                {
-                    Config.GetPalPlayerCharacter()->ShooterComponent->GetHasWeapon()->IsRequiredBullet = !Config.IsInfinAmmo;
-                }
+                Config.GetPalPlayerCharacter()->ShooterComponent->GetHasWeapon()->IsRequiredBullet = !Config.IsInfinAmmo;
             }
         }
         if (Config.IsGodMode)

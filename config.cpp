@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "config.h"
 #include <algorithm>
+#include "include/Menu.hpp"
 
 config Config;
 
@@ -31,7 +32,8 @@ bool DetourTick(SDK::APalPlayerCharacter* m_this,float DeltaSecond)
             Config.localPlayer = m_this;
         }
     }
-        return OldTickFunc(m_this, DeltaSecond);
+    DX11_Base::g_Menu->Loops();
+    return OldTickFunc(m_this, DeltaSecond);
 }
 SDK::UWorld* config::GetUWorld()
 {
