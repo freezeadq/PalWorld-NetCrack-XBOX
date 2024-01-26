@@ -24,6 +24,7 @@ public:
 	bool IsSafe = true;
 	bool IsInfinAmmo = false;
 	bool IsToggledFly = false;
+	bool IsGodMode = false;
 	bool IsMuteki = false;
 	bool IsMonster = false;
 	bool IsQuick = false;

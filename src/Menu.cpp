@@ -205,6 +205,8 @@ namespace DX11_Base {
 
             ImGui::Checkbox("InfAmmo", &Config.IsInfinAmmo);
 
+            ImGui::Checkbox("Godmode", &Config.IsGodMode);
+
             //Creadit Mokobake
             //ImGui::Checkbox("MuteKiGodmode", &Config.IsMuteki);
             
@@ -373,8 +375,8 @@ namespace DX11_Base {
                         {
                             SDK::FFixedPoint fixpoint = SDK::FFixedPoint();
                             fixpoint.Value = 99999999;
+                            Config.GetPalPlayerCharacter()->ReviveCharacter(fixpoint);
                             Config.GetPalPlayerCharacter()->ReviveCharacter_ToServer(fixpoint);
-                            
                         }
                     }
                 }
@@ -579,6 +581,7 @@ namespace DX11_Base {
                     {
                         SDK::FFixedPoint fixpoint = SDK::FFixedPoint();
                         fixpoint.Value = 99999999;
+                        Config.GetPalPlayerCharacter()->ReviveCharacter(fixpoint);
                         Config.GetPalPlayerCharacter()->ReviveCharacter_ToServer(fixpoint);
 
                     }
@@ -633,6 +636,29 @@ namespace DX11_Base {
                 }
             }
         }
- 
+        if (Config.GetPalPlayerCharacter() != NULL)
+        {
+            if (Config.GetPalPlayerCharacter()->ShooterComponent != NULL && Config.GetPalPlayerCharacter()->ShooterComponent->CanShoot())
+            {
+                if (Config.GetPalPlayerCharacter()->ShooterComponent->GetHasWeapon() != NULL)
+                {
+                    Config.GetPalPlayerCharacter()->ShooterComponent->GetHasWeapon()->IsRequiredBullet = !Config.IsInfinAmmo;
+                }
+            }
+        }
+        if (Config.IsGodMode)
+        {
+            if (Config.GetPalPlayerCharacter() != NULL)
+            {
+                double HP = Config.GetPalPlayerCharacter()->CharacterParameterComponent->IndividualParameter->GetHP().Value;
+                if (HP < 99990000.0)
+                {
+                    SDK::FFixedPoint fixpoint = SDK::FFixedPoint();
+                    fixpoint.Value = 99999999;
+                    Config.GetPalPlayerCharacter()->ReviveCharacter(fixpoint);
+                    Config.GetPalPlayerCharacter()->ReviveCharacter_ToServer(fixpoint);
+                }
+            }
+        }
     }
 }
