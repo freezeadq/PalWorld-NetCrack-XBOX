@@ -288,6 +288,26 @@ namespace DX11_Base {
                     }
                 }
             }
+            if (ImGui::Button("Gotta craft fast", ImVec2(ImGui::GetWindowContentRegionWidth() - 3, 20))) //Nknights23
+            {
+                SDK::APalPlayerCharacter* pPalCharacter = Config.GetPalPlayerCharacter();
+                if (!pPalCharacter)
+                    return;
+
+                SDK::UPalCharacterParameterComponent* pParams = pPalCharacter->CharacterParameterComponent;
+                if (!pParams)
+                    return;
+
+                SDK::UPalIndividualCharacterParameter* ivParams = pParams->IndividualParameter;
+                if (!ivParams)
+                    return;
+
+                SDK::FPalIndividualCharacterSaveParameter sParams = ivParams->SaveParameter;
+                SDK::TArray<SDK::FFloatContainer_FloatPair> mCraftSpeedArray = sParams.CraftSpeedRates.Values;
+
+                if (mCraftSpeedArray.Num() > 0)
+                    mCraftSpeedArray[0].Value = 99999.f;
+            }
            ////ImGui::InputText("Pal Name", Config.PalName, sizeof(Config.PalName));
            // //if (!Config.IsMonster){ImGui::InputInt("Pal Rank", &Config.PalRank);}
            // //if (Config.IsMonster) { ImGui::InputInt("Pal Count", &Config.PalNum); }
