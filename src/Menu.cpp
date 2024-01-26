@@ -136,23 +136,28 @@ void Spawn_Multiple(config::QuickItemSet Set)
             for (int i = 0; i < IM_ARRAYSIZE(database::basic_items_stackable); i++) {
                 AddItem(InventoryData, _strdup(database::basic_items_stackable[i].c_str()), 100);
             }
+            break;
         case 1:
             for (int i = 0; i < IM_ARRAYSIZE(database::basic_items_single); i++)
             {
                 AddItem(InventoryData, _strdup(database::basic_items_single[i].c_str()), 1);
             }
+            break;
         case 2:
             for (int i = 0; i < IM_ARRAYSIZE(database::pal_unlock_skills); i++) {
                 AddItem(InventoryData, _strdup(database::pal_unlock_skills[i].c_str()), 1);
             }
+            break;
         case 3:
             for (int i = 0; i < IM_ARRAYSIZE(database::spheres); i++) {
                 AddItem(InventoryData, _strdup(database::spheres[i].c_str()), 100);
             }
+            break;
         case 4:
             for (int i = 0; i < IM_ARRAYSIZE(database::tools); i++) {
                 AddItem(InventoryData, _strdup(database::tools[i].c_str()), 1);
             }
+            break;
         default:
             break;
     }
@@ -286,6 +291,37 @@ namespace DX11_Base {
                             }
                         }
                     }
+                }
+            }
+            if (ImGui::Button("Give All Effigies", ImVec2(ImGui::GetContentRegionAvail().x - 3, 20)))
+            {
+                SDK::APalPlayerCharacter* pPalCharacter = Config.GetPalPlayerCharacter();
+                if (!pPalCharacter)
+                    return;
+
+                SDK::UWorld* world = Config.GetUWorld();
+                if (!world)
+                    return;
+
+                SDK::TUObjectArray* objects = world->GObjects;
+
+                for (int i = 0; i < objects->NumElements; ++i) {
+                    SDK::UObject* object = objects->GetByIndex(i);
+
+                    if (!object) {
+                        continue;
+                    }
+
+                    if (!object->IsA(SDK::APalLevelObjectRelic::StaticClass())) {
+                        continue;
+                    }
+
+                    SDK::APalLevelObjectObtainable* relic = (SDK::APalLevelObjectObtainable*)object;
+                    if (!relic) {
+                        continue;
+                    }
+
+                    ((SDK::APalPlayerState*)pPalCharacter->PlayerState)->RequestObtainLevelObject_ToServer(relic);
                 }
             }
             if (ImGui::Button("Gotta craft fast", ImVec2(ImGui::GetWindowContentRegionWidth() - 3, 20))) //Nknights23
@@ -668,14 +704,13 @@ namespace DX11_Base {
         }
         if (Config.IsGodMode)
         {
-            if (Config.GetPalPlayerCharacter() != NULL)
+            if (Config.GetPalPlayerCharacter() && Config.GetPalPlayerCharacter()->CharacterParameterComponent && Config.GetPalPlayerCharacter()->CharacterParameterComponent->IndividualParameter)
             {
                 double HP = Config.GetPalPlayerCharacter()->CharacterParameterComponent->IndividualParameter->GetHP().Value;
                 if (HP < 99990000.0)
                 {
                     SDK::FFixedPoint fixpoint = SDK::FFixedPoint();
                     fixpoint.Value = 99999999;
-                    Config.GetPalPlayerCharacter()->ReviveCharacter(fixpoint);
                     Config.GetPalPlayerCharacter()->ReviveCharacter_ToServer(fixpoint);
                 }
             }
