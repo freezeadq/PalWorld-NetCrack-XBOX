@@ -715,9 +715,9 @@ namespace DX11_Base {
             if (Config.GetUWorld()
                 || Config.GetUWorld()->PersistentLevel
                 || Config.GetUWorld()->PersistentLevel->WorldSettings)
-           {
-                Config.GetUWorld()->PersistentLevel->WorldSettings->TimeDilation = Config.SpeedModiflers;
-           }
+            {
+                Config.GetUWorld()->OwningGameInstance->LocalPlayers[0]->PlayerController->AcknowledgedPawn->CustomTimeDilation = Config.SpeedModiflers;
+            }
         }
         if (Config.IsAttackModiler)
         {
