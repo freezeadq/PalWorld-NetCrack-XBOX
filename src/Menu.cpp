@@ -11,7 +11,7 @@ void DetourEqui(SDK::UPalNetworkIndividualComponent* p_this, SDK::FPalInstanceID
 {
     if(AddStatusPointArray->IsValid())
     {
-        for (int i = 0; i < AddStatusPointArray->Num(); i++)
+        for (int i = 0; i < AddStatusPointArray->Count(); i++)
         {
             (*AddStatusPointArray)[i].StatusPoint = -1 * Config.EqModifiler;
         }
@@ -130,19 +130,19 @@ void ExploitFly(bool IsFly)
 }
 void Spawn_Multiple(config::QuickItemSet Set)
 {
-    SDK::UPalPlayerInventoryData* InventoryData = Config.GetPalPlayerCharacter()->GetPalPlayerController()->GetPalPlayerState()->GetInventoryData();
-    switch (Set)
-    {
+        SDK::UPalPlayerInventoryData * InventoryData = Config.GetPalPlayerCharacter()->GetPalPlayerController()->GetPalPlayerState()->GetInventoryData();
+        switch (Set)
+        {
         case 0:
             for (int i = 0; i < IM_ARRAYSIZE(database::basic_items_stackable); i++) {
                 AddItem(InventoryData, _strdup(database::basic_items_stackable[i].c_str()), 100);
             }
             break;
         case 1:
-            for (int i = 0; i < IM_ARRAYSIZE(database::basic_items_single); i++)
-            {
-                AddItem(InventoryData, _strdup(database::basic_items_single[i].c_str()), 1);
-            }
+            for (int i = 0; i < IM_ARRAYSIZE(database::basic_items_single); i++) 
+             {
+                    AddItem(InventoryData, _strdup(database::basic_items_single[i].c_str()), 1);
+             }
             break;
         case 2:
             for (int i = 0; i < IM_ARRAYSIZE(database::pal_unlock_skills); i++) {
@@ -161,7 +161,7 @@ void Spawn_Multiple(config::QuickItemSet Set)
             break;
         default:
             break;
-    }
+        }
 }//Creadit:asashi
 
 namespace DX11_Base {
@@ -220,7 +220,7 @@ namespace DX11_Base {
             ImGui::SliderInt("AttackModifilers", &Config.DamageUp, 0, 200000);
             ImGui::SliderInt("defenseModifilers", &Config.DefuseUp, 0, 200000);
             
-            if (ImGui::Button("PrintPlayerAddr", ImVec2(ImGui::GetWindowContentRegionWidth() - 3, 20)))
+            if (ImGui::Button("PrintPlayerAddr", ImVec2(ImGui::GetContentRegionAvail().x - 3, 20)))
             {
                 SDK::APalPlayerCharacter* p_appc = Config.GetPalPlayerCharacter();
                 if (p_appc != NULL)
@@ -240,7 +240,7 @@ namespace DX11_Base {
             ImGui::InputInt("EXP:", &Config.EXP);
             ImGui::InputText("Item Name", Config.ItemName,sizeof(Config.ItemName));
             ImGui::InputInt("Item Num", &Config.Item);
-            if (ImGui::Button("Give item", ImVec2(ImGui::GetWindowContentRegionWidth() - 3, 20)))
+            if (ImGui::Button("Give item", ImVec2(ImGui::GetContentRegionAvail().x - 3, 20)))
             {
                 SDK::APalPlayerCharacter* p_appc = Config.GetPalPlayerCharacter();
                 if (p_appc != NULL)
@@ -263,69 +263,23 @@ namespace DX11_Base {
                     }
                 }
             }
-            if (ImGui::Button("Give first item", ImVec2(ImGui::GetWindowContentRegionWidth() - 3, 20)))
+
+            ImGui::InputInt("Slot to modify (start 0):", &Config.AddItemSlot);
+            ImGui::InputInt("Multiple of how much:", &Config.AddItemCount);
+            
+            if (ImGui::Button("Give items from slot", ImVec2(ImGui::GetContentRegionAvail().x - 3, 20)))
             {
-                SDK::APalPlayerCharacter* p_appc = Config.GetPalPlayerCharacter();
-                if (p_appc != NULL)
-                {
-                    if (Config.GetPalPlayerCharacter()->GetPalPlayerController() != NULL)
-                    {
-                        if (Config.GetPalPlayerCharacter()->GetPalPlayerController()->GetPalPlayerState() != NULL)
-                        {
-                            SDK::UPalPlayerInventoryData* InventoryData = Config.GetPalPlayerCharacter()->GetPalPlayerController()->GetPalPlayerState()->GetInventoryData();
-                            if (InventoryData != NULL) {
-                                SDK::UPalItemContainerMultiHelper* InventoryMultiHelper = InventoryData->InventoryMultiHelper;
-                                if (InventoryMultiHelper != NULL) {
-                                    SDK::TArray<class SDK::UPalItemContainer*> Containers = InventoryMultiHelper->Containers;
-                                    if (Containers.Num() == 0) {
-                                        return;
-                                    }
-
-                                    SDK::UPalItemSlot* FirstSlot = Containers[0]->Get(0);
-
-                                    if (FirstSlot != NULL)
-                                    {
-                                        SDK::FPalItemId FirstItemId = FirstSlot->GetItemId();
-                                        InventoryData->RequestAddItem(FirstItemId.StaticId, Config.Item, true);
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
+                AddToInventoryContainer(Config.AddItemCount, Config.AddItemSlot);
             }
-            if (ImGui::Button("Give All Effigies", ImVec2(ImGui::GetContentRegionAvail().x - 3, 20)))
+            
+            // this does not work lol
+            // std::stringstream AddItemsString;
+            // AddItemsString << "Give " << Config.AddItemCount << " items from slot" << Config.AddItemSlot;
+            if (ImGui::Button("Unlock All Effigies", ImVec2(ImGui::GetContentRegionAvail().x - 3, 20)))
             {
-                SDK::APalPlayerCharacter* pPalCharacter = Config.GetPalPlayerCharacter();
-                if (!pPalCharacter)
-                    return;
-
-                SDK::UWorld* world = Config.GetUWorld();
-                if (!world)
-                    return;
-
-                SDK::TUObjectArray* objects = world->GObjects;
-
-                for (int i = 0; i < objects->NumElements; ++i) {
-                    SDK::UObject* object = objects->GetByIndex(i);
-
-                    if (!object) {
-                        continue;
-                    }
-
-                    if (!object->IsA(SDK::APalLevelObjectRelic::StaticClass())) {
-                        continue;
-                    }
-
-                    SDK::APalLevelObjectObtainable* relic = (SDK::APalLevelObjectObtainable*)object;
-                    if (!relic) {
-                        continue;
-                    }
-
-                    ((SDK::APalPlayerState*)pPalCharacter->PlayerState)->RequestObtainLevelObject_ToServer(relic);
-                }
+                UnlockAllEffigies();
             }
-            if (ImGui::Button("Gotta craft fast", ImVec2(ImGui::GetWindowContentRegionWidth() - 3, 20))) //Nknights23
+            if (ImGui::Button("Gotta craft fast", ImVec2(ImGui::GetContentRegionAvail().x - 3, 20))) //Nknights23
             {
                 SDK::APalPlayerCharacter* pPalCharacter = Config.GetPalPlayerCharacter();
                 if (!pPalCharacter)
@@ -371,7 +325,7 @@ namespace DX11_Base {
                     }
                 }
             }*/
-            if (ImGui::Button("HomeTP", ImVec2(ImGui::GetWindowContentRegionWidth() - 3, 20)))
+            if (ImGui::Button("HomeTP", ImVec2(ImGui::GetContentRegionAvail().x - 3, 20)))
             {
                 SDK::APalPlayerCharacter* p_appc = Config.GetPalPlayerCharacter();
                 if (p_appc != NULL)
@@ -407,7 +361,7 @@ namespace DX11_Base {
                     }
                 }
             }*/
-            if (ImGui::Button("ToggleFly", ImVec2(ImGui::GetWindowContentRegionWidth() - 3, 20)))
+            if (ImGui::Button("ToggleFly", ImVec2(ImGui::GetContentRegionAvail().x - 3, 20)))
             {
                 Config.IsToggledFly = !Config.IsToggledFly;
                 ExploitFly(Config.IsToggledFly);
@@ -426,7 +380,7 @@ namespace DX11_Base {
                     }
                 }
             }*/
-            if (ImGui::Button("GodHealth", ImVec2(ImGui::GetWindowContentRegionWidth() - 3, 20)))
+            if (ImGui::Button("GodHealth", ImVec2(ImGui::GetContentRegionAvail().x - 3, 20)))
             {
                 SDK::APalPlayerCharacter* p_appc = Config.GetPalPlayerCharacter();
                 if (p_appc != NULL)
@@ -439,12 +393,13 @@ namespace DX11_Base {
                             fixpoint.Value = 99999999;
                             Config.GetPalPlayerCharacter()->ReviveCharacter(fixpoint);
                             Config.GetPalPlayerCharacter()->ReviveCharacter_ToServer(fixpoint);
+                            
                         }
                     }
                 }
             }
             //Creadit WoodgamerHD
-            if(ImGui::Button("Give exp", ImVec2(ImGui::GetWindowContentRegionWidth() - 3, 20)))
+            if(ImGui::Button("Give exp", ImVec2(ImGui::GetContentRegionAvail().x - 3, 20)))
             {
                 SDK::APalPlayerCharacter* p_appc = Config.GetPalPlayerCharacter();
                 if (p_appc != NULL)
@@ -461,7 +416,7 @@ namespace DX11_Base {
                     }
                 }
             }
-            if (ImGui::Button("Equivalent", ImVec2(ImGui::GetWindowContentRegionWidth() - 3, 20)))
+            if (ImGui::Button("Equivalent", ImVec2(ImGui::GetContentRegionAvail().x - 3, 20)))
             {
                 Config.isEq = !Config.isEq;
                 ToggleEqui(Config.isEq);
@@ -476,7 +431,7 @@ namespace DX11_Base {
             ImGui::Spacing();
             ImGui::Separator();
             ImGui::Spacing();
-            if (ImGui::Button("UNHOOK DLL", ImVec2(ImGui::GetWindowContentRegionWidth() - 3, 20))) {
+            if (ImGui::Button("UNHOOK DLL", ImVec2(ImGui::GetContentRegionAvail().x - 3, 20))) {
 #if DEBUG
                 g_Console->printdbg("\n\n[+] UNHOOK INITIALIZED [+]\n\n", g_Console->color.red);
 
@@ -606,19 +561,19 @@ namespace DX11_Base {
 
         void TABQuick()//Creadit:asashi
         {
-                if (ImGui::Button("Basic Items stack", ImVec2(ImGui::GetWindowContentRegionWidth() - 3, 20))) {
+                if (ImGui::Button("Basic Items stack", ImVec2(ImGui::GetContentRegionAvail().x - 3, 20))) {
                     Spawn_Multiple(config::QuickItemSet::basic_items_stackable);
                 }
-                if (ImGui::Button("Basic Items single", ImVec2(ImGui::GetWindowContentRegionWidth() - 3, 20))) {
+                if (ImGui::Button("Basic Items single", ImVec2(ImGui::GetContentRegionAvail().x - 3, 20))) {
                     Spawn_Multiple(config::QuickItemSet::basic_items_single);
                 }
-                if (ImGui::Button("Unlock Pal skills", ImVec2(ImGui::GetWindowContentRegionWidth() - 3, 20))) {
+                if (ImGui::Button("Unlock Pal skills", ImVec2(ImGui::GetContentRegionAvail().x - 3, 20))) {
                     Spawn_Multiple(config::QuickItemSet::pal_unlock_skills);
                 }
-                if (ImGui::Button("Spheres", ImVec2(ImGui::GetWindowContentRegionWidth() - 3, 20))) {
+                if (ImGui::Button("Spheres", ImVec2(ImGui::GetContentRegionAvail().x - 3, 20))) {
                     Spawn_Multiple(config::QuickItemSet::spheres);
                 }
-                if (ImGui::Button("Tools", ImVec2(ImGui::GetWindowContentRegionWidth() - 3, 20))) {
+                if (ImGui::Button("Tools", ImVec2(ImGui::GetContentRegionAvail().x - 3, 20))) {
                     Spawn_Multiple(config::QuickItemSet::tools);
                 }
         }
@@ -638,9 +593,10 @@ namespace DX11_Base {
 
 		if (g_GameVariables->m_ShowDemo)
 			ImGui::ShowDemoWindow();
-	}
 
-   
+        if (Config.isDebugESP)
+            ESP_DEBUG(Config.mDebugESPDistance, ImVec4(0,1,0,1));
+	}
 
 	void Menu::MainMenu()
 	{
@@ -709,7 +665,6 @@ namespace DX11_Base {
 
 	void Menu::HUD(bool* p_open)
 	{
-
 	}
 
     void Menu::Loops()
