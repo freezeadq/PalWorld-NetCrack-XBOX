@@ -2,6 +2,7 @@
 #include "../include/Menu.hpp"
 #include "SDK.hpp"
 #include "config.h"
+#include <algorithm>
 
 AddStatus Equi;
 AddStatus OldEqui;
@@ -562,7 +563,7 @@ namespace DX11_Base {
 
             int cur_size = 0;
 
-            char item_search[100];
+            static char item_search[100];
 
             ImGui::InputText("Search", item_search, IM_ARRAYSIZE(item_search));
 
@@ -573,7 +574,13 @@ namespace DX11_Base {
                 std::getline(ss, left_text, '|');
                 std::getline(ss, right_text);
 
-                if (item_search[0] != '\0' && !right_text.contains(item_search))
+                auto right_to_lower = right_text;
+                std::string item_search_to_lower = item_search;
+
+                std::transform(right_to_lower.begin(), right_to_lower.end(), right_to_lower.begin(), ::tolower);
+                std::transform(item_search_to_lower.begin(), item_search_to_lower.end(), item_search_to_lower.begin(), ::tolower);
+
+                if (item_search[0] != '\0' && (right_to_lower.find(item_search_to_lower) == std::string::npos))
                     continue;
 
                 if (cur_size != 0 && cur_size < 20)
