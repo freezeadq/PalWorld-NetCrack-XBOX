@@ -1,11 +1,11 @@
 #pragma once
 #include <Windows.h>
 #include "libs/utils/memory.h"
-#include "database.h"
 #include "SDK.hpp"
+#include "database.h"
+#include "ItemList.hpp"
 
 typedef bool(*Tick)(SDK::APalPlayerCharacter* m_this, float DeltaSecond);
-typedef void(*AddStatus)(SDK::UPalNetworkIndividualComponent* p_this, SDK::FPalInstanceID* ID, SDK::TArray<SDK::FPalGotStatusPoint>* AddStatusPointArray);
 
 class config
 {
@@ -13,7 +13,6 @@ public:
 	//offsets
 	DWORD64 ClientBase = 0;
 	DWORD64 offset_Tick = 0x298F560;//APalPlayerCharacter::Tick
-	DWORD64 offset_AddStatus = 0x2640DC0; //UPalNetworkIndividualComponent::AddPlayerCharacterStatusPoint_ToServer
 	//check
 	bool IsESP = false;
 	bool IsAimbot = false;
@@ -23,18 +22,20 @@ public:
 	bool IsInfStamina = false;
 	bool IsSafe = true;
 	bool IsInfinAmmo = false;
-	bool IsToggledFly = false;
 	bool IsGodMode = false;
+	bool IsToggledFly = false;
 	bool IsMuteki = false;
 	bool IsMonster = false;
 	bool IsQuick = false;
 	bool matchDbItems = true;
-	bool isEq = false;
 	bool isDebugESP = false;
-	float mDebugESPDistance = 5.0f;
-
-	//def and value
+	bool bisOpenManager = false;
+	bool filterPlayer = false;
+	bool bisRandomName = false;
+	bool bisTeleporter = false;
 	float SpeedModiflers = 1.0f;
+	//def and value
+	float mDebugESPDistance = 5.0f;
 	int DamageUp = 0;
 	int DefuseUp = 0;
 	int EXP = 0;
@@ -42,7 +43,6 @@ public:
 	float Pos[3] = { 0,0,0 };
 	char ItemName[255];
 	char inputTextBuffer[255] = "";
-	int EqModifiler = 1;
 	SDK::UWorld* gWorld = nullptr;
 	SDK::APalPlayerCharacter* localPlayer = NULL;
 	SDK::TArray<SDK::APalPlayerCharacter*> AllPlayers = {};
@@ -70,12 +70,11 @@ public:
 	static SDK::APalPlayerState* GetPalPlayerState();
 	static SDK::UPalPlayerInventoryData* GetInventoryComponent();
 	static SDK::APalWeaponBase* GetPlayerEquippedWeapon();
-	static SDK::TArray<SDK::APalPlayerCharacter*> GetTAllPlayers();
 	static bool	GetTAllPlayers(SDK::TArray<class SDK::APalCharacter*>* outResult);
 	static bool	GetTAllImpNPC(SDK::TArray<class SDK::APalCharacter*>* outResult);
 	static bool	GetTAllNPC(SDK::TArray<class SDK::APalCharacter*>* outResult);
 	static bool	GetTAllPals(SDK::TArray<class SDK::APalCharacter*>* outResult);
-	static bool GetAllActorsofType(SDK::UClass* mType, std::vector<SDK::AActor*>* outArray, bool bLoopAllLevels = false , bool bSkipLocalPlayer = false);
+	static bool GetAllActorsofType(SDK::UClass* mType, std::vector<SDK::AActor*>* outArray, bool bLoopAllLevels = false, bool bSkipLocalPlayer = false);
 	static void Init();
 	static void Update(const char* filterText);
 	static const std::vector<std::string>& GetFilteredItems();

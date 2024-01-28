@@ -120,6 +120,9 @@
     <ClInclude Include="database.h">
       <Filter>Header Files\Class</Filter>
     </ClInclude>
+    <ClInclude Include="ItemList.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
