@@ -366,7 +366,9 @@ namespace DX11_Base {
                         {
                             SDK::FFixedPoint fixpoint = SDK::FFixedPoint();
                             fixpoint.Value = 99999999;
-                            Config.GetPalPlayerCharacter()->ReviveCharacter(fixpoint);
+                            //Config.GetPalPlayerCharacter()->ReviveCharacter(fixpoint);
+                            if (Config.GetPalPlayerCharacter()->CharacterParameterComponent->IsDying())
+                                Config.GetPalPlayerCharacter()->CharacterParameterComponent->ReviveFromDying();
                             Config.GetPalPlayerCharacter()->ReviveCharacter_ToServer(fixpoint);
                             
                         }
@@ -678,7 +680,9 @@ namespace DX11_Base {
                     {
                         SDK::FFixedPoint fixpoint = SDK::FFixedPoint();
                         fixpoint.Value = 99999999;
-                        Config.GetPalPlayerCharacter()->ReviveCharacter(fixpoint);
+                        //Config.GetPalPlayerCharacter()->ReviveCharacter(fixpoint);
+                        if(Config.GetPalPlayerCharacter()->CharacterParameterComponent->IsDying())
+                            Config.GetPalPlayerCharacter()->CharacterParameterComponent->ReviveFromDying();
                         Config.GetPalPlayerCharacter()->ReviveCharacter_ToServer(fixpoint);
 
                     }
