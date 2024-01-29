@@ -21,9 +21,9 @@ void config::Update(const char* filterText)
     }
     std::sort(Config.db_filteredItems.begin(), Config.db_filteredItems.end());
 }
-const std::vector<std::string>& config::GetFilteredItems(){ return Config.db_filteredItems; }
+const std::vector<std::string>& config::GetFilteredItems() { return Config.db_filteredItems; }
 
-bool DetourTick(SDK::APalPlayerCharacter* m_this,float DeltaSecond)
+bool DetourTick(SDK::APalPlayerCharacter* m_this, float DeltaSecond)
 {
     if (m_this->GetPalPlayerController() != NULL)
     {
@@ -54,8 +54,8 @@ SDK::UPalCharacterImportanceManager* config::GetCharacterImpManager()
     if (!pWorld)
         return nullptr;
 
-    SDK::UGameInstance* pGameInstance = pWorld->OwningGameInstance; 
-    if (!pGameInstance) 
+    SDK::UGameInstance* pGameInstance = pWorld->OwningGameInstance;
+    if (!pGameInstance)
         return nullptr;
 
     return static_cast<SDK::UPalGameInstance*>(pGameInstance)->CharacterImportanceManager;
@@ -69,6 +69,15 @@ SDK::APalPlayerCharacter* config::GetPalPlayerCharacter()
         return Config.localPlayer;
     }
     return nullptr;
+}
+
+SDK::APalPlayerController* config::GetPalPlayerController()
+{
+    SDK::APalPlayerCharacter* pPlayer = GetPalPlayerCharacter();
+    if (!pPlayer)
+        return nullptr;
+
+    return static_cast<SDK::APalPlayerController*>(pPlayer->GetPalPlayerController());
 }
 
 SDK::APalPlayerState* config::GetPalPlayerState()
@@ -174,7 +183,7 @@ bool config::GetAllActorsofType(SDK::UClass* mType, std::vector<SDK::AActor*>* o
             if (!pActor || !pActor->RootComponent || (pActor == pLocalPlayer && bSkipLocalPlayer))
                 continue;
 
-            if (!pActor->IsA(mType)) 
+            if (!pActor->IsA(mType))
                 continue;
 
             result.push_back(pActor);
@@ -193,7 +202,11 @@ void config::Init()
 {
     //register hook
     Config.ClientBase = (DWORD64)GetModuleHandleA("PalWorld-WinGDK-Shipping.exe");
-    
+
+    SDK::InitGObjects();
+
+    Config.gWorld = Config.GetUWorld();
+
     TickFunc = (Tick)(Config.ClientBase + Config.offset_Tick);
 
     MH_CreateHook(TickFunc, DetourTick, reinterpret_cast<void**>(&OldTickFunc));
