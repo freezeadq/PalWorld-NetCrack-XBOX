@@ -41,6 +41,7 @@ DWORD WINAPI MainThread_Initialize()
         }
     }
 
+    ///  EXIT
     FreeLibraryAndExitThread(g_hModule, EXIT_SUCCESS);
     return EXIT_SUCCESS;
 }
