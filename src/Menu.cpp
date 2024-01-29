@@ -696,13 +696,8 @@ namespace DX11_Base
         {
             if (Config.GetPalPlayerCharacter() && Config.GetPalPlayerCharacter()->CharacterParameterComponent && Config.GetPalPlayerCharacter()->CharacterParameterComponent->IndividualParameter)
             {
-                double HP = Config.GetPalPlayerCharacter()->CharacterParameterComponent->IndividualParameter->GetHP().Value;
-                if (HP < 99990000.0)
-                {
-                    SDK::FFixedPoint fixpoint = SDK::FFixedPoint();
-                    fixpoint.Value = 99999999;
-                    Config.GetPalPlayerCharacter()->ReviveCharacter_ToServer(fixpoint);
-                }
+                if (Config.GetPalPlayerCharacter()->CharacterParameterComponent->IndividualParameter->GetHP().Value < INT_MAX)
+                    Config.GetPalPlayerCharacter()->ReviveCharacter_ToServer(SDK::FFixedPoint(INT_MAX));
             }
         }
     }

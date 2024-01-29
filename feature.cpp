@@ -317,7 +317,7 @@ void ReviveLocalPlayer()
 	if (!pPalPlayerCharacter)
 		return;
 
-	FFixedPoint newHealthPoint = FFixedPoint(99999999);
+	FFixedPoint newHealthPoint = FFixedPoint(INT_MAX);
 	if (Config.GetPalPlayerCharacter()->CharacterParameterComponent->IsDying())
 		Config.GetPalPlayerCharacter()->CharacterParameterComponent->ReviveFromDying();
 	pPalPlayerCharacter->ReviveCharacter_ToServer(newHealthPoint);
