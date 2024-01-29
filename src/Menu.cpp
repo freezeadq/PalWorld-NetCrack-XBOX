@@ -645,13 +645,13 @@ namespace DX11_Base
         auto top_center = ImVec2({ draw_size.x * .5f, draw_size.y * 0.0f });
         
         //  Watermark
-        ImDraw->AddText(top_center, g_Menu->dbg_RAINBOW, "PalWorld-NetCrack");
+        //ImDraw->AddText(top_center, g_Menu->dbg_RAINBOW, "PalWorld-NetCrack");
 
         if (Config.IsESP)
             ESP();
 
         if (Config.isDebugESP)
-            ESP_DEBUG(Config.mDebugESPDistance, ImVec4(0, 1, 0, 1));
+            ESP_DEBUG(Config.mDebugESPDistance);
 
         ImGui::End();
 	}
