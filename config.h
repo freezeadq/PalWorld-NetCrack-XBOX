@@ -12,9 +12,10 @@ class config
 public:
 	//offsets
 	DWORD64 ClientBase = 0;
-	DWORD64 offset_Tick = 0x298F560;//APalPlayerCharacter::Tick
+	DWORD64 offset_Tick = 0x298F500;//APalPlayerCharacter::Tick
 	//check
 	bool IsESP = false;
+	bool IsFullbright = false;
 	bool IsAimbot = false;
 	bool IsSpeedHack = false;
 	bool IsAttackModiler = false;
@@ -66,6 +67,7 @@ public:
 	//static function
 	static SDK::UWorld* GetUWorld();
 	static SDK::UPalCharacterImportanceManager* GetCharacterImpManager();
+	static SDK::ULocalPlayer* GetLocalPlayer();
 	static SDK::APalPlayerCharacter* GetPalPlayerCharacter(); 
 	static SDK::APalPlayerController* GetPalPlayerController();
 	static SDK::APalPlayerState* GetPalPlayerState();
